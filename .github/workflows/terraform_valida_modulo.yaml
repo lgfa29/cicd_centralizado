@@ -8,14 +8,18 @@ on:
         required: false
         default: "ubuntu-20.04"
         type: string
-    secrets:
-      token:
-        required: true
+      working_directory:
+        description: "Diretório em que a pipeline irá atuar"
+        required: false
+        default: ""
 
 jobs:
   jobs_terraform:
     name: Terraform workflow
     runs-on: ${{ inputs.os_version }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.working_directory }}
 
     steps:
       - name: Checkout
