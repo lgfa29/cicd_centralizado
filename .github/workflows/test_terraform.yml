@@ -4,14 +4,19 @@ on:
   push:
 
 jobs:
-  test-terraform:
+  test-terraform-001:
     uses: "./.github/workflows/terraform_valida_modulo.yaml"
-    strategy:
-      matrix:
-        working-dir:
-          - tests/terraform/test-001
-          - tests/terraform/test-002
-          - tests/terraform/test-003
-          - tests/terraform/test-004
     with:
-      working_directory: ${{ matrix.working-dir }}
+      working_directory: tests/terraform/test-001
+  test-terraform-002:
+    uses: "./.github/workflows/terraform_valida_modulo.yaml"
+    with:
+      working_directory: tests/terraform/test-002
+  test-terraform-003:
+    uses: "./.github/workflows/terraform_valida_modulo.yaml"
+    with:
+      working_directory: tests/terraform/test-003
+  test-terraform-004:
+    uses: "./.github/workflows/terraform_valida_modulo.yaml"
+    with:
+      working_directory: tests/terraform/test-004
