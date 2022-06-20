@@ -12,6 +12,7 @@ on:
         description: "Diretório em que a pipeline irá atuar"
         required: false
         default: ""
+        type: string
 
 jobs:
   jobs_terraform:
