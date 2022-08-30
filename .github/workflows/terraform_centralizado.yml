@@ -58,7 +58,7 @@ jobs:
       - name: Terraform Format
         run: terraform fmt -check -diff
 
-      - uses: oNaiPs/secrets-to-env-action@v1
+      - uses: mentoriaiac/secrets-to-env-action@v1
         with:
           secrets: ${{ toJSON(secrets) }}
 
@@ -74,7 +74,7 @@ jobs:
 
       - name: Terraform Plan
         if: ${{ inputs.run_plan }}
-        run: terraform plan -out tfplan -no-color >> $GITHUB_STEP_SUMMARY
+        run: terraform plan -out tfplan -no-color
 
       - name: Terraform Apply
         if: ( ${{ inputs.run_apply }} &&	${{ inputs.run_plan }} )
