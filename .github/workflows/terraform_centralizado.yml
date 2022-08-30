@@ -58,6 +58,10 @@ jobs:
       - name: Terraform Format
         run: terraform fmt -check -diff
 
+      - uses: oNaiPs/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(secrets) }}
+
       - name: Terraform Init
         run: terraform init
 
