@@ -8,21 +8,21 @@ on:
         required: false
         default: "ubuntu-20.04"
         type: string
-      run_apply:
-        description: "Define se será executado ou não o step Terraform Apply"
+      workspace:
+        description: "Define o workspace em que o modulo será executado"
         required: false
-        default: false
-        type: boolean
-      run_plan:
+        default: ""
+        type: string
+      plan:
         description: "Define se será executado ou não o step Terraform Plan"
         required: false
         default: false
         type: boolean
-      tf_workspace:
-        description: "Define o workspace em que o modulo será executado"
+      apply:
+        description: "Define se será executado ou não o step Terraform Apply"
         required: false
-        default: "default"
-        type: string
+        default: false
+        type: boolean
       working_directory:
         description: "Diretório onde a pipeline irá atuar"
         required: false
@@ -30,16 +30,24 @@ on:
         type: string
 
 jobs:
-  jobs_terraform:
+  terraform:
     name: Terraform workflow
     runs-on: ${{ inputs.os_version }}
     defaults:
       run:
         working-directory: ${{ inputs.working_directory }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      # É esperado que secrets sejam herdados do repositório que está chamando
+      # a pipeline e que esses secrets serão usados para configurar providers
+      # to Terraform usando variáveis de ambiente.
+      # Esse step irá export todos os secrets disponíveis como variáveis de
+      # ambiente para os passos seguintes.
+      - uses: mentoriaiac/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(secrets) }}
 
       - name: Lê versão do Terraform
         id: tf-version
@@ -58,9 +66,9 @@ jobs:
       - name: Terraform Format
         run: terraform fmt -check -diff
 
-      - uses: mentoriaiac/secrets-to-env-action@v1
-        with:
-          secrets: ${{ toJSON(secrets) }}
+      - name: Terraform Workspace
+        if: ${{ inputs.workspace != '' }}
+        run: terraform workspace select ${{ inputs.workspace }}
 
       - name: Terraform Init
         run: terraform init
@@ -73,9 +81,9 @@ jobs:
           docker run --rm -v $PWD:/app -w /app tfsec/tfsec .
 
       - name: Terraform Plan
-        if: ${{ inputs.run_plan }}
-        run: terraform plan -out tfplan -no-color
+        if: ${{ inputs.plan }}
+        run: terraform plan -out tfplan
 
       - name: Terraform Apply
-        if: ( ${{ inputs.run_apply }} &&	${{ inputs.run_plan }} )
-        run: terraform apply "tfplan"
+        if: ${{ inputs.plan && inputs.apply }}
+        run: terraform apply tfplan

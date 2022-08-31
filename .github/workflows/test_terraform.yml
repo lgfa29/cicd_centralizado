@@ -20,3 +20,25 @@ jobs:
     uses: "./.github/workflows/terraform_valida_modulo.yaml"
     with:
       working_directory: tests/terraform/test-required-version/test-004
+  test-terraform:
+    uses: "./.github/workflows/terraform.yaml"
+    with:
+      working_directory: tests/terraform/workspace-plan-apply
+  test-terraform-plan:
+    uses: "./.github/workflows/terraform.yaml"
+    with:
+      working_directory: tests/terraform/workspace-plan-apply
+      plan: true
+  test-terraform-plan-apply:
+    uses: "./.github/workflows/terraform.yaml"
+    with:
+      working_directory: tests/terraform/workspace-plan-apply
+      plan: true
+      apply: true
+  test-terraform-plan-apply-workspace:
+    uses: "./.github/workflows/terraform.yaml"
+    with:
+      working_directory: tests/terraform/workspace-plan-apply
+      plan: true
+      apply: true
+      workspace: "dev"
